@@ -22,6 +22,7 @@ export const POST = async (req: Request) => {
 			)
 		}
 
+
 		const customInstructionsPrompt = customInstructions
 			? `\n\nAdditional Instructions:\n${customInstructions}\n\nMake sure to incorporate these instructions while maintaining the template structure.`
 			: ''
@@ -35,6 +36,7 @@ export const POST = async (req: Request) => {
 Issue Title: ${issue.title}
 Issue ID: ${issue.identifier}
 Issue URL: ${issue.url}
+Issue Description: ${issue.description}
 
 Please follow this exact template:
 
