@@ -28,7 +28,7 @@ export const GET = async (request: Request) => {
 				code,
 				client_id: process.env.LINEAR_CLIENT_ID!,
 				client_secret: process.env.LINEAR_CLIENT_SECRET!,
-				redirect_uri: 'http://localhost:3000/api/linear/callback',
+				redirect_uri: process.env.NEXT_PUBLIC_APP_URL + '/api/linear/callback',
 				grant_type: 'authorization_code'
 			})
 		})
