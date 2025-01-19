@@ -1,33 +1,30 @@
 'use client'
 
-import {useCallback, useEffect, useState} from 'react'
-import {getCookie, deleteCookie} from 'cookies-next'
+import {useEffect, useState} from 'react'
+import {checkLinearAuth} from '@/app/actions/checkLinearAuth'
 
-type LinearAuthHook = {
-	isAuthenticated: boolean
-	isLoading: boolean
-	logout: () => void
-}
-
-const useLinearAuth = (): LinearAuthHook => {
-	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
+const useLinearAuth = () => {
+	const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
 	const [isLoading, setIsLoading] = useState(true)
 
 	useEffect(() => {
-		const token = getCookie('linear_access_token')
-		setIsAuthenticated(!!token)
-		setIsLoading(false)
-	}, [])
+		const init = async () => {
+			try {
+				const {isAuthenticated: authStatus} = await checkLinearAuth()
+				setIsAuthenticated(authStatus)
+			} catch (error) {
+				// console.error('Failed to check auth status:', error)
+			} finally {
+				setIsLoading(false)
+			}
+		}
 
-	const logout = useCallback(() => {
-		deleteCookie('linear_access_token')
-		setIsAuthenticated(false)
+		init()
 	}, [])
 
 	return {
-		isAuthenticated,
-		isLoading,
-		logout
+		isAuthenticated: Boolean(isAuthenticated),
+		isLoading: isLoading
 	}
 }
 

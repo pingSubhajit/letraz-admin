@@ -23,8 +23,8 @@ const IssueSelect = ({issues, isLoading, error, onSelect}: IssueSelectProps) => 
 
 	if (error) {
 		return (
-			<div className="p-4 text-sm text-red-500 bg-red-50 dark:bg-red-900/10 rounded-lg">
-				{error}
+			<div className="rounded-lg bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 p-3">
+				<p className="text-sm text-red-600 dark:text-red-400">{error}</p>
 			</div>
 		)
 	}
@@ -39,34 +39,44 @@ const IssueSelect = ({issues, isLoading, error, onSelect}: IssueSelectProps) => 
 			<DropdownMenuTrigger asChild>
 				<Button
 					variant="outline"
-					className="w-full justify-between"
+					className="w-full justify-between border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900"
 					disabled={isLoading}
 				>
-					<span className="truncate">
+					<span className="truncate font-normal">
 						{isLoading
 							? 'Loading issues...'
 							: selectedIssue
 								? `${selectedIssue.identifier}: ${selectedIssue.title}`
-								: 'Select an issue'}
+								: 'Select an in-progress issue'}
 					</span>
 					<ChevronDown className="ml-2 h-4 w-4 opacity-50" />
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent className="w-full min-w-[300px] max-h-[300px] overflow-auto">
+			<DropdownMenuContent
+				align="start"
+				className="w-[var(--radix-dropdown-menu-trigger-width)] max-h-[280px] overflow-y-auto"
+			>
 				{issues.length === 0 ? (
-					<DropdownMenuItem disabled>
-						No in-progress issues found
+					<DropdownMenuItem disabled className="text-neutral-500">
+						No in-progress issues assigned to you
 					</DropdownMenuItem>
 				) : (
 					issues.map(issue => (
 						<DropdownMenuItem
 							key={issue.id}
 							onSelect={() => handleSelect(issue)}
-							className="flex items-center justify-between"
+							className="flex items-center py-2 px-3"
 						>
-							<span className="truncate">
-								{issue.identifier}: {issue.title}
-							</span>
+							<div className="min-w-0">
+								<div className="flex items-center gap-2">
+									<span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+										{issue.identifier}
+									</span>
+									<span className="truncate text-sm text-neutral-500 dark:text-neutral-400">
+										{issue.title}
+									</span>
+								</div>
+							</div>
 						</DropdownMenuItem>
 					))
 				)}
