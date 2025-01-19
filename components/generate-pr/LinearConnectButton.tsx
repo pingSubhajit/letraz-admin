@@ -13,7 +13,7 @@ const LinearConnectButton = () => {
 		try {
 			const params = new URLSearchParams({
 				client_id: process.env.NEXT_PUBLIC_LINEAR_CLIENT_ID!,
-				redirect_uri: 'http://localhost:3000/api/linear/callback',
+				redirect_uri: process.env.NEXT_PUBLIC_APP_URL + '/api/linear/callback',
 				response_type: 'code',
 				state: crypto.randomUUID(),
 				scope: 'read'
