@@ -2,7 +2,7 @@
 
 import {cookies} from 'next/headers'
 
-export async function checkLinearAuth() {
+export const checkLinearAuth = async () => {
 	const cookieStore = cookies()
 	const token = cookieStore.get('linear_access_token')
 
@@ -10,4 +10,4 @@ export async function checkLinearAuth() {
 		isAuthenticated: Boolean(token),
 		token: token?.value
 	}
-} 
+}

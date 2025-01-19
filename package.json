@@ -10,6 +10,7 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^1.1.0",
     "@eslint/compat": "^1.2.5",
     "@eslint/js": "^9.18.0",
     "@linear/sdk": "^37.0.0",
@@ -19,6 +20,7 @@
     "@radix-ui/react-separator": "^1.1.1",
     "@radix-ui/react-slot": "^1.1.1",
     "@radix-ui/react-tooltip": "^1.1.6",
+    "ai": "^4.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cookies-next": "^5.1.0",
@@ -29,7 +31,8 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

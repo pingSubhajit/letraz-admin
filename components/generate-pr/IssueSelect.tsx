@@ -10,6 +10,7 @@ import {Button} from '@/components/ui/button'
 import {ChevronDown} from 'lucide-react'
 import {useState} from 'react'
 import {Issue} from '@linear/sdk'
+import {cn} from '@/lib/utils'
 
 type IssueSelectProps = {
 	issues: Issue[]
@@ -39,7 +40,12 @@ const IssueSelect = ({issues, isLoading, error, onSelect}: IssueSelectProps) => 
 			<DropdownMenuTrigger asChild>
 				<Button
 					variant="outline"
-					className="w-full justify-between border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900"
+					className={cn(
+						'w-full justify-between border-neutral-200 dark:border-neutral-800',
+						'bg-white dark:bg-neutral-900',
+						'focus-visible:ring-0 focus-visible:ring-offset-0',
+						'hover:bg-neutral-50 dark:hover:bg-neutral-800'
+					)}
 					disabled={isLoading}
 				>
 					<span className="truncate font-normal">
