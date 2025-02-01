@@ -1,7 +1,7 @@
 'use client'
 
 import {useEffect, useState} from 'react'
-import {checkLinearAuth} from '@/app/actions/checkLinearAuth'
+import {checkLinearAuth} from '@/lib/actions/checkLinearAuth'
 
 const useLinearAuth = () => {
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
