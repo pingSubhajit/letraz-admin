@@ -39,7 +39,9 @@ export const GET = async (request: Request) => {
 			throw new Error(data.error || 'Failed to exchange code for token')
 		}
 
-		const response = NextResponse.redirect(new URL('/generate-pr', request.url))
+		const response = NextResponse.redirect(
+			new URL(state || '/', request.url)
+		)
 
 		cookieStore.set('linear_access_token', data.access_token, {
 			secure: process.env.NODE_ENV === 'production',
@@ -50,7 +52,7 @@ export const GET = async (request: Request) => {
 		return response
 	} catch (error) {
 		return NextResponse.redirect(
-			new URL('/?error=Failed to exchange code for token', request.url)
+			new URL('/login?error=Failed to exchange code for token', request.url)
 		)
 	}
 }
