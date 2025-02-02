@@ -8,6 +8,35 @@ import {cn} from '@/lib/utils'
 import {useSearchParams} from 'next/navigation'
 import {Zap, GitPullRequest, Users, Lock} from 'lucide-react'
 
+const LetrazLogo = () => (
+	<div className="flex items-center gap-0.5">
+		<div className="h-3 w-3 rounded-full bg-white" />
+		<div className="h-3 w-3 rounded-full bg-white" />
+		<div className="h-3 w-3 rounded-full bg-white" />
+	</div>
+)
+
+const ConnectionIndicator = () => (
+	<div className="relative flex items-center w-8">
+		{/* Base line */}
+		<div className="absolute w-full h-px bg-neutral-700" />
+
+		{/* Animated dot with glow effect */}
+		<motion.div
+			animate={{
+				x: [0, 32, 0],
+				opacity: [0.6, 1, 0.6]
+			}}
+			transition={{
+				duration: 2,
+				repeat: Infinity,
+				easing: 'ease-in-out'
+			}}
+			className="absolute h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_2px_rgba(52,211,153,0.4)] dark:bg-emerald-500 dark:shadow-[0_0_8px_2px_rgba(16,185,129,0.6)]"
+		/>
+	</div>
+)
+
 const LoginScreen = () => {
 	const [isConnecting, setIsConnecting] = useState(false)
 	const searchParams = useSearchParams()
@@ -44,8 +73,18 @@ const LoginScreen = () => {
 						transition={{delay: 0.2, type: 'spring'}}
 						className="flex justify-center"
 					>
-						<div className="relative rounded-2xl bg-neutral-900/5 p-4 dark:bg-white/5">
-							<SiLinear className="h-14 w-14 text-neutral-900 dark:text-neutral-100" />
+						<div className="relative flex items-center gap-4">
+							<div className="relative rounded-xl bg-neutral-900 p-4">
+								<SiLinear className="h-14 w-14 text-white" />
+							</div>
+
+							<ConnectionIndicator />
+
+							<div className="relative rounded-xl bg-neutral-900 p-4">
+								<div className="flex h-14 w-14 items-center justify-center">
+									<LetrazLogo />
+								</div>
+							</div>
 						</div>
 					</motion.div>
 
