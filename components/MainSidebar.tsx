@@ -5,7 +5,7 @@ import {
 	SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
 	SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail, SidebarSeparator
 } from '@/components/ui/sidebar'
-import {BookCheck, GitPullRequest, Home, Settings} from 'lucide-react'
+import {BookCheck, GitPullRequest, Home, Settings, Users} from 'lucide-react'
 import pfp1 from '@/public/pfp1.png'
 import Image from 'next/image'
 import {SiLinear, SiSentry, SiPosthog} from 'react-icons/si'
@@ -44,6 +44,11 @@ const tools = [
 		title: 'Generate PR writeup',
 		url: '/generate-pr',
 		icon: GitPullRequest
+	},
+	{
+		title: 'Waitlist Management',
+		url: '/waitlist',
+		icon: Users
 	}
 ]
 

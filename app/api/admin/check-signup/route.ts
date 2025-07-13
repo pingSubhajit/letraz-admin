@@ -7,7 +7,7 @@ export const GET = async (request: NextRequest) => {
 		const adminApiKey = request.headers.get('x-admin-api-key')
 
 		// Verify admin API key (using CLERK_SECRET_KEY as the admin key)
-		if (!adminApiKey || adminApiKey !== process.env.ADMIN_API_KEY) {
+		if (!adminApiKey || adminApiKey !== process.env.CONSUMER_API_KEY) {
 			return NextResponse.json(
 				{error: 'Unauthorized: Invalid admin API key'},
 				{status: 401}

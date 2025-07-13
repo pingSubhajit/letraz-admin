@@ -49,7 +49,7 @@ Configure the following environment variables:
 CLERK_SECRET_KEY=your_clerk_secret_key
 NEXT_PUBLIC_APP_URL=current_url_of_the_app
 OPENAI_API_KEY=your_openai_api_key
-ADMIN_API_KEY=your_admin_api_key
+CONSUMER_API_KEY=your_admin_api_key
 LINEAR_CLIENT_ID=your_linear_client_id
 LINEAR_CLIENT_SECRET=your_linear_client_secret
 NEXT_PUBLIC_LINEAR_CLIENT_ID=your_linear_client_id
