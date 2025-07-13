@@ -31,8 +31,7 @@ const RootLayout = async ({
 }>) => {
 	const cookieStore = await cookies()
 	const token = cookieStore.get('linear_access_token')
-	// const isAuthenticated = Boolean(token)
-	const isAuthenticated = true
+	const isAuthenticated = Boolean(token)
 
 	return (
 		<html lang="en" suppressHydrationWarning>
