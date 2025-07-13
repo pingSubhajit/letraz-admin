@@ -7,6 +7,7 @@ import {SidebarProvider} from '@/components/ui/sidebar'
 import {cookies} from 'next/headers'
 import LoginScreen from '@/components/auth/LoginScreen'
 import {LogoutButton} from '@/components/LogoutButton'
+import {Toaster} from 'sonner'
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -30,7 +31,8 @@ const RootLayout = async ({
 }>) => {
 	const cookieStore = await cookies()
 	const token = cookieStore.get('linear_access_token')
-	const isAuthenticated = Boolean(token)
+	// const isAuthenticated = Boolean(token)
+	const isAuthenticated = true
 
 	return (
 		<html lang="en" suppressHydrationWarning>
@@ -59,6 +61,7 @@ const RootLayout = async ({
 						</div>
 					)}
 				</ThemeProvider>
+				<Toaster />
 			</body>
 		</html>
 	)
