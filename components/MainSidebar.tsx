@@ -10,6 +10,7 @@ import pfp1 from '@/public/pfp1.png'
 import Image from 'next/image'
 import {SiLinear, SiSentry, SiPosthog} from 'react-icons/si'
 import Link from 'next/link'
+import {LogoutButton} from '@/components/LogoutButton'
 
 const items = [
 	{
@@ -48,6 +49,11 @@ const tools = [
 	{
 		title: 'Waitlist Management',
 		url: '/waitlist',
+		icon: Users
+	},
+	{
+		title: 'Team Management',
+		url: '/team-management',
 		icon: Users
 	}
 ]
@@ -124,7 +130,9 @@ const MainSidebar = () => (
 
 			<SidebarRail />
 		</SidebarContent>
-		<SidebarFooter/>
+		<SidebarFooter className="p-4">
+			<LogoutButton />
+		</SidebarFooter>
 	</Sidebar>
 )
 
