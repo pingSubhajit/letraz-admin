@@ -103,14 +103,23 @@ export const AddRepositoryDialog = ({open, onOpenChange}: AddRepositoryDialogPro
 			const webhookUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/github/webhooks`
 			try {
 				const testResponse = await fetch(webhookUrl, {method: 'GET'})
-			} catch {}
+				if (testResponse.ok) {
+					console.log('Webhook URL test passed:', webhookUrl)
+				} else {
+					console.warn(`Webhook URL ${webhookUrl} returned status ${testResponse.status}`)
+				}
+			} catch (error) {
+				console.warn('Webhook URL test failed:', error)
+			}
 
 			// Check for existing webhooks first
+			console.log('Checking for existing webhooks...')
 			const existingWebhooks = [] as any[]
 
 			const ourWebhook = existingWebhooks.find(hook => hook.config.url === webhookUrl && hook.events.includes('push'))
 
 			if (ourWebhook) {
+				console.log('Found existing webhook:', ourWebhook.id)
 				throw new Error(`Webhook already exists for ${selectedRepo.name}. Please check your GitHub repository's webhook settings and either delete the existing webhook or verify its configuration. The webhook URL should be: ${webhookUrl}`)
 			}
 
@@ -132,10 +141,17 @@ export const AddRepositoryDialog = ({open, onOpenChange}: AddRepositoryDialogPro
 
 				if (!res.ok) throw new Error('Webhook creation failed')
 			} catch (webhookError) {
+				console.error('Failed to create webhook via server:', webhookError)
 				throw webhookError instanceof Error ? webhookError : new Error('Failed to create webhook')
 			}
 
 			// Save repository to database after webhook creation succeeds
+			console.log('Saving repository to database:', {
+				name: selectedRepo.name,
+				owner: (selectedRepo as any).owner.login,
+				githubId: selectedRepo.id
+			})
+
 			const repositoryResult = await createRepository({
 				name: selectedRepo.name,
 				owner: (selectedRepo as any).owner.login,
@@ -143,6 +159,8 @@ export const AddRepositoryDialog = ({open, onOpenChange}: AddRepositoryDialogPro
 				accessToken: '',
 				createdByUserId: user.id
 			})
+
+			console.log('Repository saved successfully:', repositoryResult)
 
 			// Update the repository with the webhook secret
 			await fetchMutation(api.repositories.updateRepository, {
@@ -155,6 +173,7 @@ export const AddRepositoryDialog = ({open, onOpenChange}: AddRepositoryDialogPro
 			setStep('select')
 			setSelectedRepoId('')
 		} catch (error) {
+			console.error('Error adding repository:', error)
 			toast.error(error instanceof Error ? error.message : 'Failed to add repository')
 		} finally {
 			setIsLoading(false)

@@ -25,6 +25,7 @@ export const GitHubConnectButton = ({className}: GitHubConnectButtonProps) => {
 				setIsConnected(connected)
 				setConnectionStatus(connected ? 'connected' : 'disconnected')
 			} catch (error) {
+				console.error('Failed to check GitHub connection:', error)
 				setConnectionStatus('error')
 			}
 		}
