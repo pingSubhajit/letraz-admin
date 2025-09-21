@@ -189,7 +189,7 @@ export const matchBranchWithLinearIssues = async (
 		const stateName = (stateObj as any)?.name || ''
 
 		// Check if issue is in a valid state for PR creation
-		const validStates = ['In Progress', 'Todo', 'Backlog']
+		const validStates = ['In Progress', 'Todo', 'Backlog', 'Experimenting']
 		if (stateName && !validStates.includes(stateName)) {
 			return {
 				branchName,
