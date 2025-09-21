@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as apiTokens from "../apiTokens.js";
 import type * as files from "../files.js";
+import type * as repositories from "../repositories.js";
 import type * as teamMembers from "../teamMembers.js";
 
 /**
@@ -28,6 +29,7 @@ import type * as teamMembers from "../teamMembers.js";
 declare const fullApi: ApiFromModules<{
   apiTokens: typeof apiTokens;
   files: typeof files;
+  repositories: typeof repositories;
   teamMembers: typeof teamMembers;
 }>;
 export declare const api: FilterApi<
