@@ -41,7 +41,7 @@ Issue Description: ${issue.description}
 Please follow this exact template:
 
 ### Issue:
-[${issue.title}](${issue.url})
+${issue.identifier} | [${issue.title}](${issue.url})
 
 ### Description:
 [Generate a brief, clear description of what the PR is about based on the issue title]
