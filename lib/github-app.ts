@@ -75,7 +75,7 @@ export class GitHubAppClient {
 		}
 
 		// Replace escaped newlines with real newlines
-    value = value.replace(/\\n/g, '\n')
+		value = value.replace(/\\n/g, '\n')
 
 		return value
 	}
@@ -84,7 +84,7 @@ export class GitHubAppClient {
 	 * Get app installations
 	 */
 	async getInstallations(): Promise<GitHubAppInstallation[]> {
-    // no-op debug removed
+		// no-op debug removed
 
 		const auth = createAppAuth({
 			appId: this.appId,
@@ -139,9 +139,9 @@ export class GitHubAppClient {
 				if ((data.repositories as any[]).some((r: any) => r.full_name === `${owner}/${repo}`)) {
 					return installation
 				}
-      } catch (error) {
-        // swallow errors checking installation repos
-      }
+			} catch (error) {
+				// swallow errors checking installation repos
+			}
 		}
 
 		return null
