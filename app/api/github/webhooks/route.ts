@@ -337,43 +337,80 @@ const linkGitHubIssueAndApplyMetadata = async (
     if (matchedIssue.githubIssue) {
       console.log(`✅ Found GitHub issue directly attached to Linear issue:`, matchedIssue.githubIssue)
 
-      // Link the GitHub issue to the PR
-      console.log('🔗 Linking GitHub issue to PR...')
-      await linkIssueToPR(
-        repositoryData,
-        prData,
-        matchedIssue.githubIssue.number,
-        githubClient
-      )
+      const sourceOwner = matchedIssue.githubIssue.owner || repositoryData.owner
+      const sourceRepo = matchedIssue.githubIssue.repo || repositoryData.name
 
-      // Mirror milestone from the GitHub issue onto the PR
-      console.log('🏷️ Mirroring milestone from GitHub issue...')
-      try {
-        const sourceIssue = await githubClient.getIssue(
+      // If issue repo differs from PR repo, link cross-repo using closing keyword reference (won't auto-close across repos, but links UI)
+      if (sourceOwner !== repositoryData.owner || sourceRepo !== repositoryData.name) {
+        console.log('🔗 Linking cross-repo GitHub issue to PR body with closing keyword reference')
+        const updatedBody = `${prData.body}\n\nFixes ${sourceOwner}/${sourceRepo}#${matchedIssue.githubIssue.number}`
+        await githubClient.updatePullRequest(
           repositoryData.owner,
           repositoryData.name,
-          matchedIssue.githubIssue.number
+          prData.number,
+          { body: updatedBody }
         )
-        console.log('Source GitHub issue details:', {
-          number: sourceIssue.number,
-          title: sourceIssue.title,
-          milestone: sourceIssue.milestone
-        })
 
-        if (sourceIssue.milestone) {
-          console.log(`Found milestone #${sourceIssue.milestone.number} on GitHub issue`)
-          await githubClient.updateIssue(
+        // Try to mirror milestone by name from the source issue
+        try {
+          const appClient = getGitHubAppClient()
+          const sourceOctokit = await appClient.getClientForRepo(sourceOwner, sourceRepo)
+          if (sourceOctokit) {
+            const { data: issue } = await sourceOctokit.issues.get({ owner: sourceOwner, repo: sourceRepo, issue_number: matchedIssue.githubIssue.number })
+            if (issue.milestone?.title) {
+              await applyLinearMilestoneToPR(
+                repositoryData,
+                prData,
+                { id: '', name: issue.milestone.title },
+                githubClient
+              )
+            }
+
+            // Add a back-reference comment on the source issue to ensure a visible link
+            try {
+              const prUrl = prData.html_url
+              await sourceOctokit.issues.createComment({
+                owner: sourceOwner,
+                repo: sourceRepo,
+                issue_number: matchedIssue.githubIssue.number,
+                body: `Linked PR: ${prUrl}`,
+              })
+              console.log('✅ Added cross-repo back-reference comment on source issue')
+            } catch (e) {
+              console.warn('❌ Failed to add back-reference comment on source issue:', e)
+            }
+          }
+        } catch (e) {
+          console.warn('❌ Failed to mirror milestone from cross-repo issue:', e)
+        }
+      } else {
+        // Same-repo flow as before
+        console.log('🔗 Linking GitHub issue to PR...')
+        await linkIssueToPR(
+          repositoryData,
+          prData,
+          matchedIssue.githubIssue.number,
+          githubClient
+        )
+
+        console.log('🏷️ Mirroring milestone from GitHub issue...')
+        try {
+          const sourceIssue = await githubClient.getIssue(
             repositoryData.owner,
             repositoryData.name,
-            prData.number,
-            { milestone: sourceIssue.milestone.number }
+            matchedIssue.githubIssue.number
           )
-          console.log(`✅ Applied milestone #${sourceIssue.milestone.number} to PR #${prData.number}`)
-        } else {
-          console.log('⚠️ No milestone found on source GitHub issue')
+          if (sourceIssue.milestone) {
+            await githubClient.updateIssue(
+              repositoryData.owner,
+              repositoryData.name,
+              prData.number,
+              { milestone: sourceIssue.milestone.number }
+            )
+          }
+        } catch (e) {
+          console.warn('❌ Failed to mirror milestone from GitHub issue:', e)
         }
-      } catch (e) {
-        console.warn('❌ Failed to mirror milestone from GitHub issue:', e)
       }
     } else if (githubIssueMapping) {
       console.log(`✅ Found existing GitHub issue mapping for Linear issue ${matchedIssue.identifier}`)

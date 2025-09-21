@@ -35,6 +35,8 @@ export interface MatchedLinearIssue {
   }
   githubIssue?: {
     id: string
+    owner: string
+    repo: string
     number: number
   }
 }
@@ -353,6 +355,8 @@ export const matchBranchWithLinearIssues = async (
         if (githubMatch) {
           matchedIssue.githubIssue = {
             id: `${githubMatch[1]}/${githubMatch[2]}#${githubMatch[3]}`,
+            owner: githubMatch[1],
+            repo: githubMatch[2],
             number: parseInt(githubMatch[3])
           }
           console.log('Extracted GitHub issue:', matchedIssue.githubIssue)
@@ -375,6 +379,8 @@ export const matchBranchWithLinearIssues = async (
         if (m) {
           matchedIssue.githubIssue = {
             id: `${m[1]}/${m[2]}#${m[3]}`,
+            owner: m[1],
+            repo: m[2],
             number: parseInt(m[3])
           }
           console.log('Extracted GitHub issue from attachments:', matchedIssue.githubIssue)
