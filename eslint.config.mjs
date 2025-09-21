@@ -25,7 +25,7 @@ export default [...compat.extends('next/core-web-vitals'), {
 	rules: {
 		semi: ['error', 'never'],
 		quotes: ['error', 'single'],
-		'no-console': 'warn',
+		'no-console': 'error',
 
 		'react/jsx-no-undef': ['error', {
 			allowGlobals: true
