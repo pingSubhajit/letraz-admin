@@ -7,7 +7,7 @@ import WaitlistTable from '@/components/waitlist/WaitlistTable'
 import {Loader2, RefreshCw} from 'lucide-react'
 import {Button} from '@/components/ui/button'
 
-export default () => {
+const WaitlistPage = () => {
 	const [entries, setEntries] = useState<WaitlistEntry[]>([])
 	const [loading, setLoading] = useState(true)
 	const [bulkUpdateLoading, setBulkUpdateLoading] = useState(false)
@@ -129,3 +129,5 @@ export default () => {
 		</div>
 	)
 }
+
+export default WaitlistPage
