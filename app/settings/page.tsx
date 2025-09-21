@@ -1,19 +1,19 @@
 'use client'
 
-import { useState } from 'react'
-import { useQuery } from 'convex/react'
-import { api } from '@/convex/_generated/api'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Plus, Github, Trash2, ExternalLink } from 'lucide-react'
-import { AddRepositoryDialog } from '@/components/settings/AddRepositoryDialog'
-import { RepositoryCard } from '@/components/settings/RepositoryCard'
-import { GitHubConnectButton } from '@/components/settings/GitHubConnectButton'
-import { GitHubAppSettings } from '@/components/settings/GitHubAppSettings'
-import { useLinearUser } from '@/hooks/useLinearUser'
+import {useState} from 'react'
+import {useQuery} from 'convex/react'
+import {api} from '@/convex/_generated/api'
+import {Button} from '@/components/ui/button'
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card'
+import {Plus, Github, Trash2, ExternalLink} from 'lucide-react'
+import {AddRepositoryDialog} from '@/components/settings/AddRepositoryDialog'
+import {RepositoryCard} from '@/components/settings/RepositoryCard'
+import {GitHubConnectButton} from '@/components/settings/GitHubConnectButton'
+import {GitHubAppSettings} from '@/components/settings/GitHubAppSettings'
+import {useLinearUser} from '@/hooks/useLinearUser'
 
-export default function SettingsPage() {
-	const { user, isLoading, error } = useLinearUser()
+const SettingsPage = () => {
+	const {user, isLoading, error} = useLinearUser()
 	const [showAddDialog, setShowAddDialog] = useState(false)
 
 	const repositories = useQuery(api.repositories.listRepositories, {
@@ -122,3 +122,5 @@ export default function SettingsPage() {
 		</div>
 	)
 }
+
+export default SettingsPage
