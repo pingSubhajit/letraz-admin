@@ -92,9 +92,20 @@ export const matchBranchWithLinearIssues = async (
 	branchName: string,
 	repositoryData: any
 ): Promise<BranchMatchResult> => {
+	console.log('🔍 Starting branch matching process:', {
+		branchName,
+		repositoryId: repositoryData._id,
+		repository: `${repositoryData.owner}/${repositoryData.name}`,
+		linearTeamId: repositoryData.linearTeamId
+	})
+
 	const linearIssueId = extractLinearIssueId(branchName)
 
 	if (!linearIssueId) {
+		console.log('❌ No Linear issue ID found in branch name:', {
+			branchName,
+			extractedId: linearIssueId
+		})
 		return {
 			branchName,
 			linearIssueId: null,
@@ -103,9 +114,19 @@ export const matchBranchWithLinearIssues = async (
 		}
 	}
 
+	console.log('✅ Linear issue ID extracted from branch:', {
+		branchName,
+		linearIssueId
+	})
+
 	try {
 		const linearClient = buildLinearClient()
 		if (!linearClient) {
+			console.error('❌ Failed to create Linear client:', {
+				branchName,
+				linearIssueId,
+				reason: 'No client available (check LINEAR_API_KEY or LINEAR_ACCESS_TOKEN)'
+			})
 			return {
 				branchName,
 				linearIssueId,
@@ -114,9 +135,16 @@ export const matchBranchWithLinearIssues = async (
 			}
 		}
 
+		console.log('✅ Linear client created successfully')
+
 		// Extract the team key and issue number from the identifier (e.g., "LET-144" -> key LET, number 144)
 		const issueNumberMatch = linearIssueId.match(/^([A-Z]+)-(\d+)$/)
 		if (!issueNumberMatch) {
+			console.log('❌ Invalid Linear issue ID format:', {
+				branchName,
+				linearIssueId,
+				expectedFormat: 'TEAM-123 (e.g., LET-144)'
+			})
 			return {
 				branchName,
 				linearIssueId,
@@ -127,6 +155,13 @@ export const matchBranchWithLinearIssues = async (
 
 		const teamKey = issueNumberMatch[1]
 		const issueNumber = parseInt(issueNumberMatch[2])
+
+		console.log('🎯 Querying Linear for issue:', {
+			teamKey,
+			issueNumber,
+			linearTeamId: repositoryData.linearTeamId,
+			repositoryId: repositoryData._id
+		})
 
 		// Query Linear for the issue (team key + number is the canonical way)
 		const issues = await linearClient.issues({
@@ -143,7 +178,19 @@ export const matchBranchWithLinearIssues = async (
 			first: 1
 		})
 
+		console.log('📊 Linear query result:', {
+			branchName,
+			linearIssueId,
+			issueCount: (issues as any).nodes?.length || 0,
+			hasIssues: (issues as any).nodes?.length > 0
+		})
+
 		if ((issues as any).nodes?.length === 0) {
+			console.log('❌ No Linear issues found matching criteria:', {
+				teamKey,
+				issueNumber,
+				linearTeamId: repositoryData.linearTeamId
+			})
 			return {
 				branchName,
 				linearIssueId,
@@ -154,10 +201,19 @@ export const matchBranchWithLinearIssues = async (
 
 		const issue = (issues as any).nodes[0]
 
+		console.log('✅ Found Linear issue:', {
+			issueId: issue.id,
+			issueIdentifier: issue.identifier,
+			issueTitle: issue.title,
+			issueState: (issue as any).state?.name,
+			issuePriority: issue.priority
+		})
+
 		/*
 		 * Resolve lazy references from Linear SDK
 		 * Some fields are already resolved, others need to be awaited
 		 */
+		console.log('🔄 Resolving lazy references from Linear issue...')
 		const statePromise = (issue as any).state ? Promise.resolve((issue as any).state).catch(() => null) : Promise.resolve(null)
 		const assigneePromise = (issue as any).assignee ? Promise.resolve((issue as any).assignee).catch(() => null) : Promise.resolve(null)
 		const teamPromise = (issue as any).team ? Promise.resolve((issue as any).team).catch(() => null) : Promise.resolve(null)
@@ -172,6 +228,14 @@ export const matchBranchWithLinearIssues = async (
 			// Some workspaces expose milestone directly on the issue as a lazy ref
 			(issue as any).projectMilestone ? Promise.resolve((issue as any).projectMilestone).catch(() => null) : Promise.resolve(null)
 		])
+
+		console.log('📋 Resolved Linear issue data:', {
+			hasState: !!stateObj,
+			hasAssignee: !!assigneeObj,
+			hasTeam: !!teamObj,
+			hasProject: !!projectObj,
+			hasProjectMilestone: !!issueProjectMilestone
+		})
 
 		// Fetch labels with proper 'this' binding to the issue instance
 		let labelsConn: any = null
@@ -188,9 +252,21 @@ export const matchBranchWithLinearIssues = async (
 		// Resolve state name
 		const stateName = (stateObj as any)?.name || ''
 
+		console.log('🔍 Issue state validation:', {
+			stateName,
+			validStates: ['In Progress', 'Todo', 'Backlog', 'Experimenting'],
+			isValidState: ['In Progress', 'Todo', 'Backlog', 'Experimenting'].includes(stateName)
+		})
+
 		// Check if issue is in a valid state for PR creation
 		const validStates = ['In Progress', 'Todo', 'Backlog', 'Experimenting']
 		if (stateName && !validStates.includes(stateName)) {
+			console.log('⚠️ Issue in invalid state for PR creation:', {
+				branchName,
+				linearIssueId,
+				currentState: stateName,
+				validStates: validStates.join(', ')
+			})
 			return {
 				branchName,
 				linearIssueId,
@@ -315,6 +391,19 @@ export const matchBranchWithLinearIssues = async (
 		// Calculate confidence based on match quality
 		const confidence = calculateMatchConfidence(branchName, linearIssueId, matchedIssue)
 
+		console.log('🎯 Final branch matching result:', {
+			branchName,
+			linearIssueId,
+			confidence,
+			matchedIssueId: matchedIssue.id,
+			matchedIssueTitle: matchedIssue.title?.substring(0, 50) + '...',
+			matchedIssueState: matchedIssue.state,
+			hasAssignee: !!matchedIssue.assignee,
+			hasLabels: matchedIssue.labels?.length > 0,
+			hasMilestone: !!matchedIssue.milestone,
+			hasGitHubIssue: !!matchedIssue.githubIssue
+		})
+
 		return {
 			branchName,
 			linearIssueId,
@@ -322,6 +411,12 @@ export const matchBranchWithLinearIssues = async (
 			confidence
 		}
 	} catch (error) {
+		console.error('💥 Error in matchBranchWithLinearIssues:', {
+			branchName,
+			linearIssueId,
+			error: error instanceof Error ? error.message : String(error),
+			stack: error instanceof Error ? error.stack : undefined
+		})
 		return {
 			branchName,
 			linearIssueId,
@@ -337,12 +432,27 @@ const calculateMatchConfidence = (
 	linearIssueId: string,
 	issue: MatchedLinearIssue
 ): 'high' | 'medium' | 'low' => {
+	console.log('📊 Calculating match confidence:', {
+		branchName,
+		linearIssueId,
+		issueTitle: issue.title,
+		issueTitleLength: issue.title.length
+	})
+
 	// High confidence if branch name is exact match or very similar to issue title
 	const branchNameLower = branchName.toLowerCase()
 	const titleLower = issue.title.toLowerCase()
 
 	// Check for exact match patterns
-	if (branchNameLower.includes(linearIssueId.toLowerCase())) {
+	const hasIssueIdInBranch = branchNameLower.includes(linearIssueId.toLowerCase())
+	console.log('🔍 Confidence check - Issue ID in branch:', {
+		linearIssueId,
+		branchNameLower,
+		hasIssueIdInBranch
+	})
+
+	if (hasIssueIdInBranch) {
+		console.log('✅ High confidence - Issue ID found in branch name')
 		return 'high'
 	}
 
@@ -350,10 +460,18 @@ const calculateMatchConfidence = (
 	const titleWords = titleLower.split(' ').filter(word => word.length > 3)
 	const matchingWords = titleWords.filter(word => branchNameLower.includes(word))
 
+	console.log('🔍 Confidence check - Title words in branch:', {
+		titleWords: titleWords,
+		matchingWords: matchingWords,
+		matchingWordsCount: matchingWords.length
+	})
+
 	if (matchingWords.length > 0) {
+		console.log('✅ Medium confidence - Found matching words in branch name')
 		return 'medium'
 	}
 
+	console.log('⚠️ Low confidence - No significant match found')
 	return 'low'
 }
 
