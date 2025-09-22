@@ -203,7 +203,7 @@ const handlePushEvent = async (payload: any, repositoryData: any, githubClient: 
 	console.log('🌿 Processing branch:', branchName)
 
 	// Check if this is a new branch creation
-	const isNewBranch = payload.created && commits.length === 1
+	const isNewBranch = payload.created
 
 	if (isNewBranch) {
 		console.log('🆕 New branch detected, starting PR generation workflow:', {
@@ -220,6 +220,7 @@ const handlePushEvent = async (payload: any, repositoryData: any, githubClient: 
 		console.log('⏭️ Skipping existing branch update:', {
 			branchName,
 			commitCount: commits?.length || 0,
+			created: payload.created,
 			isNewBranch
 		})
 	}
