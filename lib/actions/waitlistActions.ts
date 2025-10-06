@@ -37,7 +37,7 @@ if (!ADMIN_API_KEY) {
 
 export const fetchWaitlistEntries = async (): Promise<WaitlistResponse> => {
 	try {
-		const response = await fetch(`${BACKEND_HOST}/api/v1/admin/waitlist/`, {
+		const response = await fetch(`${BACKEND_HOST}/admin/waitlist/`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -50,9 +50,10 @@ export const fetchWaitlistEntries = async (): Promise<WaitlistResponse> => {
 		}
 
 		const data = await response.json()
+
 		return {
 			success: true,
-			data: data
+			data: data.waitlists
 		}
 	} catch (error) {
 		return {
@@ -64,7 +65,7 @@ export const fetchWaitlistEntries = async (): Promise<WaitlistResponse> => {
 
 export const updateWaitlistEntry = async (id: string, hasAccess: boolean, email?: string): Promise<UpdateWaitlistResponse> => {
 	try {
-		const response = await fetch(`${BACKEND_HOST}/api/v1/admin/waitlist/${id}/`, {
+		const response = await fetch(`${BACKEND_HOST}/admin/waitlist/${id}/`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -98,7 +99,7 @@ export const updateWaitlistEntry = async (id: string, hasAccess: boolean, email?
 
 export const bulkUpdateWaitlistEntries = async (waitlistIds: string[], hasAccess: boolean, entries?: WaitlistEntry[]): Promise<UpdateWaitlistResponse> => {
 	try {
-		const response = await fetch(`${BACKEND_HOST}/api/v1/admin/waitlist/bulk-update/`, {
+		const response = await fetch(`${BACKEND_HOST}/admin/waitlist/bulk-update/`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
