@@ -9,9 +9,11 @@ type TimeParts = {
 	seconds: number
 }
 
-function getTargetDate(now: Date): Date {
-	// Compute 12:00 PM IST on November 1st relative to current year.
-	// IST is UTC+5:30. We construct the target in UTC to avoid DST issues.
+const getTargetDate = (now: Date): Date => {
+	/*
+	 * Compute 12:00 PM IST on November 1st relative to current year.
+	 * IST is UTC+5:30. We construct the target in UTC to avoid DST issues.
+	 */
 	const year = now.getUTCFullYear()
 	const targetUtc = new Date(Date.UTC(year, 10 /* Nov */, 1, 6, 30, 0))
 	// If current time in UTC is past targetUtc, roll to next year
@@ -21,7 +23,7 @@ function getTargetDate(now: Date): Date {
 	return targetUtc
 }
 
-function msToParts(ms: number): TimeParts {
+const msToParts = (ms: number): TimeParts => {
 	const totalSeconds = Math.max(0, Math.floor(ms / 1000))
 	const days = Math.floor(totalSeconds / (24 * 3600))
 	const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600)
