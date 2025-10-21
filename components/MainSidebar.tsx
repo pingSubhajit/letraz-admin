@@ -5,10 +5,10 @@ import {
 	SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
 	SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail, SidebarSeparator
 } from '@/components/ui/sidebar'
-import {BookCheck, GitPullRequest, Home, Settings, Users, Wrench} from 'lucide-react'
+import {BookCheck, GitPullRequest, Home, Settings, Users, Wrench, ExternalLink} from 'lucide-react'
 import pfp1 from '@/public/pfp1.png'
 import Image from 'next/image'
-import {SiLinear, SiSentry, SiPosthog} from 'react-icons/si'
+import {SiLinear, SiSentry, SiPosthog, SiAlgolia, SiCircleci} from 'react-icons/si'
 import Link from 'next/link'
 import {LogoutButton} from '@/components/LogoutButton'
 
@@ -37,6 +37,41 @@ const items = [
 		title: 'Documentation',
 		url: 'https://outline.letraz.app',
 		icon: BookCheck
+	},
+	{
+		title: 'Resend',
+		url: 'https://resend.com/emails',
+		icon: ExternalLink
+	},
+	{
+		title: 'Knock',
+		url: 'https://dashboard.knock.app/letraz/production/workflows',
+		icon: ExternalLink
+	},
+	{
+		title: 'Loops',
+		url: 'https://app.loops.so/home',
+		icon: ExternalLink
+	},
+	{
+		title: 'Freshdesk',
+		url: 'https://letraz.freshdesk.com/a/tickets/filters/all_tickets',
+		icon: ExternalLink
+	},
+	{
+		title: 'Basehub',
+		url: 'https://basehub.com/letraz/letraz/explore',
+		icon: ExternalLink
+	},
+	{
+		title: 'CircleCI',
+		url: 'https://app.circleci.com/organization/circleci/4zsPWY8VeKUfzLLyyHdu7g',
+		icon: SiCircleci
+	},
+	{
+		title: 'Algolia',
+		url: 'https://dashboard.algolia.com/apps/MWTSY55C5C/dashboard',
+		icon: SiAlgolia
 	}
 ]
 
